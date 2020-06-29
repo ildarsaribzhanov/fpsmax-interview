@@ -24,7 +24,8 @@ class PandascoreApiProvider extends ServiceProvider
     {
         $this->app->singleton(PandaScoreAPI::class, function () {
             return new PandaScoreAPI([
-                PandaScoreAPI::SET_TOKEN => env('PANDASCORE_TOKEN'),
+                PandaScoreAPI::SET_TOKEN       => env('PANDASCORE_TOKEN'),
+                PandaScoreAPI::SET_API_BASEURL => 'api.pandascore.co/csgo',
             ]);
         });
     }
