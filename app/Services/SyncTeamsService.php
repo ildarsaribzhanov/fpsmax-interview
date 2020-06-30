@@ -35,11 +35,7 @@ class SyncTeamsService
             $hasTeamModel = $hasTeams->get($teamDto->id);
 
             if ($hasTeamModel) {
-                $extModifiedTime = new DateTime($teamDto->getData()['modified_at'] ?? '1970-01-01');
-
-                if ($hasTeamModel->updated_at->toDateTime() < $extModifiedTime) {
-                    $this->updateTeam($hasTeamModel, $teamDto, $extModifiedTime);
-                }
+                $this->updateTeam($hasTeamModel, $teamDto);
 
                 continue;
             }
@@ -77,16 +73,23 @@ class SyncTeamsService
     }
 
     /**
-     * @param Team     $team
-     * @param TeamDto  $dto
-     * @param DateTime $extModifiedTime
+     * @param Team    $teamModel
+     * @param TeamDto $dto
+     *
+     * @throws Exception
      */
-    private function updateTeam(Team $team, TeamDto $dto, DateTime $extModifiedTime): void
+    private function updateTeam(Team $teamModel, TeamDto $dto): void
     {
-        $team->name       = $dto->name;
-        $team->image      = $dto->image_url;
-        $team->updated_at = $extModifiedTime;
-        $team->save();
+        $extModifiedTime = new DateTime($dto->getData()['modified_at'] ?? '1970-01-01');
+
+        if ($teamModel->updated_at->toDateTime() >= $extModifiedTime) {
+            return;
+        }
+
+        $teamModel->name       = $dto->name;
+        $teamModel->image      = $dto->image_url;
+        $teamModel->updated_at = $extModifiedTime;
+        $teamModel->save();
     }
 
     /**
