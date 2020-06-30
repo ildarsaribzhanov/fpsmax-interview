@@ -36,20 +36,21 @@ class SyncMatchesService
         $syncMatchTeams = [];
 
         foreach ($matchDtoList as $matchDto) {
-            /** @var Match $hasTeamModel */
-            $hasTeamModel = $hasMatches->get($matchDto->id);
+            /** @var Match $hasMatchModel */
+            $hasMatchModel = $hasMatches->get($matchDto->id);
 
             $syncMatchTeams[$matchDto->id] = $this->getAttachedTeam($matchDto->opponents ?? [], $syncTeamDict);
 
-            if ($hasTeamModel) {
+            if ($hasMatchModel) {
                 $local_league_id = $syncLeagueDict[$matchDto->league_id];
-                $this->updateMatch($hasTeamModel, $matchDto, $local_league_id);
+                $this->updateMatch($hasMatchModel, $matchDto, $local_league_id);
 
                 continue;
             }
 
             $toInsert[] = [
                 'ext_id'     => $matchDto->id,
+                'begin_at'   => new DateTime($matchDto->begin_at),
                 'begin_at'   => new DateTime($matchDto->begin_at),
                 'name'       => $matchDto->name,
                 'created_at' => $now,
