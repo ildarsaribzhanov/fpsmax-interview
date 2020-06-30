@@ -19,6 +19,7 @@ class CreateMatches extends Migration
         Schema::create('matches', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('ext_id')->index();
+            $table->unsignedBigInteger('league_id');
             $table->dateTime('begin_at')->nullable();
             $table->string('name');
             $table->timestamps();

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @package App\Models
  * @property int            $id
  * @property int            $ext_id
+ * @property int            $league_id
  * @property DateTime       $begin_at
  * @property string         $name
  * @property \Carbon\Carbon $created_at
@@ -22,6 +23,7 @@ class Match extends Model
 
     protected $fillable = [
         'ext_id',
+        'league_id',
         'begin_at',
         'name',
     ];
