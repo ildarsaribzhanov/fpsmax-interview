@@ -38,7 +38,7 @@ class SyncTeamsService
                 $extModifiedTime = new DateTime($teamDto->getData()['modified_at'] ?? '1970-01-01');
 
                 if ($hasTeamModel->updated_at->toDateTime() < $extModifiedTime) {
-                    $this->updateTeam($hasTeams->get($teamDto->id), $teamDto, $extModifiedTime);
+                    $this->updateTeam($hasTeamModel, $teamDto, $extModifiedTime);
                 }
 
                 continue;
