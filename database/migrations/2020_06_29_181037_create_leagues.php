@@ -20,7 +20,7 @@ class CreateLeagues extends Migration
             $table->id();
             $table->unsignedBigInteger('ext_id')->index();
             $table->string('name');
-            $table->string('url');
+            $table->string('url')->nullable();
             $table->string('image')->nullable();
             $table->timestamps();
         });
