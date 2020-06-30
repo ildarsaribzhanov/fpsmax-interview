@@ -85,7 +85,6 @@ class SyncTeamsService
     {
         $team->name       = $dto->name;
         $team->image      = $dto->image_url;
-        $team->image      = $dto->image_url;
         $team->updated_at = $extModifiedTime;
         $team->save();
     }
