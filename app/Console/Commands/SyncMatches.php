@@ -2,9 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Services\SyncLeaguesService;
 use App\Services\SyncTeamsService;
 use Exception;
 use Illuminate\Console\Command;
+use PandaScoreAPI\Objects\LeagueDto;
+use PandaScoreAPI\Objects\TeamDto;
 use PandaScoreAPI\PandaScoreAPI;
 
 /**
@@ -34,6 +37,9 @@ class SyncMatches extends Command
     /** @var SyncTeamsService */
     private $syncTeams;
 
+    /** @var SyncLeaguesService */
+    private $syncLeagues;
+
     /**
      * Create a new command instance.
      *
@@ -41,12 +47,14 @@ class SyncMatches extends Command
      * @param SyncTeamsService $syncTeams
      */
     public function __construct(PandaScoreAPI $api,
-                                SyncTeamsService $syncTeams)
+                                SyncTeamsService $syncTeams,
+                                SyncLeaguesService $syncLeagues)
     {
         parent::__construct();
 
-        $this->api       = $api;
-        $this->syncTeams = $syncTeams;
+        $this->api         = $api;
+        $this->syncTeams   = $syncTeams;
+        $this->syncLeagues = $syncLeagues;
     }
 
 
@@ -67,12 +75,11 @@ class SyncMatches extends Command
                 }
             }
 
-            $leagueDtoList[] = $matchDto->league;
+            $leagueDtoList[$matchDto->league->id] = $matchDto->league;
         }
 
-        $teamSync = $this->syncTeams($teamDtoList);
-
-        // todo sync leagues
+        $teamSync   = $this->syncTeams($teamDtoList);
+        $leagueSync = $this->syncLeagues($leagueDtoList);
 
         // todo update matches structure, add opponents id
 
@@ -82,7 +89,7 @@ class SyncMatches extends Command
     }
 
     /**
-     * @param array $teamList
+     * @param TeamDto[] $teamList
      *
      * @return array
      * @throws Exception
@@ -94,5 +101,20 @@ class SyncMatches extends Command
         }
 
         return $this->syncTeams->sync($teamList);
+    }
+
+    /**
+     * @param LeagueDto[] $leagueList
+     *
+     * @return array
+     * @throws Exception
+     */
+    private function syncLeagues(array $leagueList): array
+    {
+        if (count($leagueList) <= 0) {
+            return [];
+        }
+
+        return $this->syncLeagues->sync($leagueList);
     }
 }
