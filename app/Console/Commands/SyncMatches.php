@@ -2,12 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Services\SyncLeaguesService;
-use App\Services\SyncTeamsService;
+use App\Services\{SyncLeaguesService, SyncMatchesService, SyncTeamsService};
 use Exception;
 use Illuminate\Console\Command;
-use PandaScoreAPI\Objects\LeagueDto;
-use PandaScoreAPI\Objects\TeamDto;
+use PandaScoreAPI\Objects\{LeagueDto, TeamDto};
 use PandaScoreAPI\PandaScoreAPI;
 
 /**
@@ -40,21 +38,28 @@ class SyncMatches extends Command
     /** @var SyncLeaguesService */
     private $syncLeagues;
 
+    /** @var SyncMatchesService */
+    private $syncMatches;
+
     /**
      * Create a new command instance.
      *
-     * @param PandaScoreAPI    $api
-     * @param SyncTeamsService $syncTeams
+     * @param PandaScoreAPI      $api
+     * @param SyncTeamsService   $syncTeams
+     * @param SyncLeaguesService $syncLeagues
+     * @param SyncMatchesService $syncMatches
      */
     public function __construct(PandaScoreAPI $api,
                                 SyncTeamsService $syncTeams,
-                                SyncLeaguesService $syncLeagues)
+                                SyncLeaguesService $syncLeagues,
+                                SyncMatchesService $syncMatches)
     {
         parent::__construct();
 
         $this->api         = $api;
         $this->syncTeams   = $syncTeams;
         $this->syncLeagues = $syncLeagues;
+        $this->syncMatches = $syncMatches;
     }
 
 
@@ -67,6 +72,7 @@ class SyncMatches extends Command
 
         $teamDtoList   = [];
         $leagueDtoList = [];
+        $matchDtoList  = [];
 
         foreach ($matches as $matchDto) {
             if ($matchDto->opponents) {
@@ -76,16 +82,13 @@ class SyncMatches extends Command
             }
 
             $leagueDtoList[$matchDto->league->id] = $matchDto->league;
+
+            $matchDtoList[$matchDto->id] = $matchDto;
         }
 
         $teamSync   = $this->syncTeams($teamDtoList);
         $leagueSync = $this->syncLeagues($leagueDtoList);
-
-        // todo update matches structure, add opponents id
-
-        // todo sync matches
-
-
+        $this->syncMatches->sync($matchDtoList, $teamSync, $leagueSync);
     }
 
     /**
