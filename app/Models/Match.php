@@ -19,12 +19,22 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Match extends Model
 {
+    /** @var string */
     protected $table = 'matches';
 
+    /** @var string[] */
     protected $fillable = [
         'ext_id',
         'league_id',
         'begin_at',
         'name',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class, 'match_team_relation', 'match_id', 'team_id');
+    }
 }
