@@ -83,7 +83,7 @@ class SyncLeaguesService
      */
     private function updateLeague(League $leagueModel, LeagueDto $dto): void
     {
-        $extModifiedTime = new DateTime($leagueDto->modified_at ?? '1970-01-01');
+        $extModifiedTime = new DateTime($dto->modified_at ?? '1970-01-01');
 
         if ($leagueModel->updated_at->toDateTime() >= $extModifiedTime) {
             return;
