@@ -24,4 +24,7 @@ RUN mv .env.example .env
 
 RUN chmod -R a+w storage
 
-CMD ["php", "artisan", "SyncMatches"]
+COPY ./run.sh /var/www
+RUN chmod +x /var/www/run.sh
+
+CMD bash -c "/var/www/run.sh"
