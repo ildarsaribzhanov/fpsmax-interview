@@ -23,7 +23,7 @@ DB_USERNAME=
 DB_PASSWORD=
 ```
 
-    2.2. API ключ от pandascore.co
+2.2. API ключ от pandascore.co
 ```bash
 PANDASCORE_TOKEN=
 ```
